@@ -1,9 +1,17 @@
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.tree.DefaultTreeModel;
 
 /*
@@ -54,40 +62,72 @@ public class Com extends UnicastRemoteObject implements ComInterface {
     public void setClient(ComInterface cliente) throws RemoteException {
         clients.add(cliente);
     }
- 
+
     @Override
     public void send(String msg) throws RemoteException {
-        /*if(msg.equals("nuevoCliente")){
-            Iterator<ComInterface> it = this.clients.iterator();
-            while(it.hasNext()){
-                ComInterface actual = it.next();
-                it.next().setModel(this.model);
-                actual.printMessage("Cambios en el arbol, presione refrescar!");
-            }
-        }*/
+        System.out.println(msg);
+
     }
 
     @Override
     public void printMessage(String s) throws RemoteException {
-        System.out.println(s);
+        if(!this.name.equals("server")){
+            System.out.println(s);
+        }
+        Iterator<ComInterface> it = this.clients.iterator();
+        while (it.hasNext()) {
+            it.next().printMessage(s);
+        }
     }
 
     @Override
     public void nuevoCliente() throws RemoteException {
         Iterator<ComInterface> it = this.clients.iterator();
         while (it.hasNext()) {
-            ComInterface actual = it.next();
             it.next().setModel(this.model);
-            actual.printMessage("Cambios en el arbol, presione refrescar!");
+            //actual.printMessage("Cambios en el arbol, presione refrescar!");
         }
     }
 
     @Override
     public File requestFile(String path) throws RemoteException {
-        System.out.println("Desde Com: " + path);
+        //System.out.println("Desde Com: " + path);
         File retVal = new File(path);
-        System.out.println(retVal.exists());
+        //System.out.println(retVal.exists());
+        
+        
+        /*BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(retVal));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Com.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String linea = "";
+        String retorno = "";
+        try {
+            while((linea = br.readLine())!= null){
+                retorno += linea;
+                retorno += "\n";
+            }
+            br.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Com.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
         return retVal;
+    }
+
+    @Override
+    public void saveFile(String content, File file) throws RemoteException {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file, false));
+            bw.write(content);
+            bw.flush();
+            bw.close();
+            printMessage(">>Archivo modificado. Estructura Actualizada.");
+
+        } catch (IOException ex) {
+            Logger.getLogger(Com.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

@@ -24,5 +24,6 @@ public interface ComInterface extends Remote{
     public void printMessage(String s) throws RemoteException;
     public void nuevoCliente() throws RemoteException;
     public File requestFile(String path) throws RemoteException;
+    public void saveFile(String content, File file) throws RemoteException;
     
 }

@@ -145,8 +145,8 @@ public final class Servidor extends javax.swing.JFrame {
             if(file.isFile()){
                 String nombre = file.getName();
                 nodo.add(new DefaultMutableTreeNode(nombre));
-                System.out.println("Archivo: " + file.getName());
-                System.out.println("Parent: " + getParentName(file.getParent()));
+                //System.out.println("Archivo: " + file.getName());
+                //System.out.println("Parent: " + getParentName(file.getParent()));
                 
             }else if(file.isDirectory()){
                 DefaultMutableTreeNode subDirectory = new DefaultMutableTreeNode(file.getName());
@@ -160,7 +160,7 @@ public final class Servidor extends javax.swing.JFrame {
     public static String getParentName(String parent){
         String retVal = "";
         String retValReversed = "";
-        System.out.println("Parent received: " + parent);
+        //System.out.println("Parent received: " + parent);
         //System.out.println(parent.length()-1);
         for (int i = parent.length()-1; i >= 0 ; i--) {
             //System.out.println("i = " + i);
