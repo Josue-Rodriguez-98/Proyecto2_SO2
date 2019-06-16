@@ -1,4 +1,5 @@
 
+import java.io.File;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import javax.swing.tree.DefaultTreeModel;
@@ -22,5 +23,6 @@ public interface ComInterface extends Remote{
     public void setClient(ComInterface cliente) throws RemoteException;
     public void printMessage(String s) throws RemoteException;
     public void nuevoCliente() throws RemoteException;
+    public File requestFile(String path) throws RemoteException;
     
 }
