@@ -30,5 +30,7 @@ public interface ComInterface extends Remote{
     public Directory pull() throws RemoteException;
     public void remove(String name) throws RemoteException;
     public void setMaster(Directory master) throws RemoteException;
+    public void print(String msg) throws RemoteException;
+    public void push(Directory modified) throws RemoteException;
     
 }

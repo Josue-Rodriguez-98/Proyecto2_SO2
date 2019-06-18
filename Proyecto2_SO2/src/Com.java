@@ -57,7 +57,10 @@ public class Com extends UnicastRemoteObject implements ComInterface {
 
     @Override
     public void sendMessage(String msg) throws RemoteException {
-        System.out.println(msg);
+        Iterator<ComInterface> it = this.clients.iterator();
+        while (it.hasNext()) {
+            it.next().print(msg);
+        }
 
     }
 
@@ -153,6 +156,24 @@ public class Com extends UnicastRemoteObject implements ComInterface {
     @Override
     public void setMaster(Directory master) throws RemoteException{
         this.master = master;
+    }
+
+    @Override
+    public void print(String msg) throws RemoteException {
+        System.out.println("[Mensaje recibido]: " + msg);
+    }
+
+    @Override
+    public void push(Directory modified) throws RemoteException {
+        this.master = modified;
+        int index = 0;
+        Iterator<ComInterface> it = this.clients.iterator();
+        while (it.hasNext()) {
+            it.next().setMaster(this.master);
+            this.clients.elementAt(index).print("Cambios la estructura, presione refrescar!");
+            index ++;
+        }
+        
     }
 
 }
