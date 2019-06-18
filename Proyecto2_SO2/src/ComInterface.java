@@ -15,6 +15,8 @@ import javax.swing.tree.DefaultTreeModel;
  * @author Josue Rodriguez
  */
 public interface ComInterface extends Remote{
+    //Estos metodos que están abajo los hice en la primera "version" del proyecto
+    
     public String getName() throws RemoteException;
     public DefaultTreeModel getModel() throws RemoteException;
     public void setModel(DefaultTreeModel modelo) throws RemoteException;
@@ -25,5 +27,8 @@ public interface ComInterface extends Remote{
     public void nuevoCliente() throws RemoteException;
     public File requestFile(String path) throws RemoteException;
     public void saveFile(String content, File file) throws RemoteException;
+    
+    //Estos metodos de aca los hice en la segunda "versión" del proyecto con las correcciones del ingeniero
+    public Directory pull() throws RemoteException;
     
 }

@@ -1,5 +1,6 @@
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /*
@@ -12,7 +13,7 @@ import java.util.ArrayList;
  *
  * @author Josue Rodriguez
  */
-public class Directory {
+public class Directory implements Serializable{
     
     public ArrayList<Directory> subdirectorios;
     public ArrayList<File> archivos;

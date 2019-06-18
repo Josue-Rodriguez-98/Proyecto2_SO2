@@ -29,23 +29,22 @@ public final class Servidor extends javax.swing.JFrame {
      */
     public Servidor() throws RemoteException, AlreadyBoundException {
         initComponents();
-        DefaultMutableTreeNode r = new DefaultMutableTreeNode("Root");
-        cargarDirectorio("./Root",r);
-        
-        server = new Com("Servidor",new DefaultTreeModel(r));
-        Registry registry = LocateRegistry.createRegistry(4200);
-        registry.bind("proyecto", server);
-        
-        
-        this.arbolServidor.setModel(new DefaultTreeModel(r));
         
         //Preparar el directorio para enviarlo a la cache del cliente
-       // System.out.println("Deberia hacer esto...");
+        // System.out.println("Deberia hacer esto...");
         directorioRaiz.setName("Root");
         directorioRaiz = cargarDirectorioEnCache("./Root",directorioRaiz);
-        System.out.println(directorioRaiz.subdirectorios.size());
         directorioRaiz.printDirectories("-",directorioRaiz);
+        //Cargar arbolito 
+        DefaultMutableTreeNode r = new DefaultMutableTreeNode("Root");
+        cargarDirectorio(directorioRaiz,r);
+        this.arbolServidor.setModel(new DefaultTreeModel(r));
         //System.out.println("Lo hizo?");
+        
+        //Iniciar servidor
+        server = new Com("Servidor",directorioRaiz);
+        Registry registry = LocateRegistry.createRegistry(4200);
+        registry.bind("proyecto", server);
         
         this.setLocationRelativeTo(null);
     }
@@ -147,7 +146,7 @@ public final class Servidor extends javax.swing.JFrame {
         });
     }
     
-    public void cargarDirectorio(String root, DefaultMutableTreeNode nodo){
+    /*public void cargarDirectorio(String root, DefaultMutableTreeNode nodo){
         File directory = new File(root);
         File[] list = directory.listFiles();
         for(File file: list){
@@ -163,7 +162,17 @@ public final class Servidor extends javax.swing.JFrame {
                 nodo.add(subDirectory);
             }
         }
-        
+    }*/
+    
+    public void cargarDirectorio(Directory dir, DefaultMutableTreeNode nodo){
+        for (int i = 0; i < dir.subdirectorios.size(); i++) {
+            DefaultMutableTreeNode subDirectory = new DefaultMutableTreeNode(dir.subdirectorios.get(i).dirName);
+            cargarDirectorio(dir.subdirectorios.get(i),subDirectory);
+            nodo.add(subDirectory);
+        }
+        for (int i = 0; i < dir.archivos.size(); i++) {
+            nodo.add(new DefaultMutableTreeNode(dir.archivos.get(i).getName()));
+        }
     }
     
     public Directory cargarDirectorioEnCache(String root, Directory dirs){
@@ -172,10 +181,10 @@ public final class Servidor extends javax.swing.JFrame {
         File[] list = directory.listFiles();
         for (File file : list) {
             if(file.isFile()){
-                System.out.println("hizo un pushFile");
+                //System.out.println("hizo un pushFile");
                 dirs.pushFile(file);
             }else if(file.isDirectory()){
-                System.out.println("hizo un pushDirectory");
+                //System.out.println("hizo un pushDirectory");
                 dirs.pushDirectory(cargarDirectorioEnCache(file.getAbsolutePath(),new Directory()));
                 dirs.imprimirDirectorios();
             }

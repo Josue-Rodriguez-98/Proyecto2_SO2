@@ -29,13 +29,20 @@ public class Com extends UnicastRemoteObject implements ComInterface {
     public DefaultTreeModel model;
     public Vector<ComInterface> clients = new Vector();
 
+    public Directory master;
+    
     public Com(String name) throws RemoteException {
         this.name = name;
     }
 
-    public Com(String name, DefaultTreeModel model) throws RemoteException {
+    /*public Com(String name, DefaultTreeModel model) throws RemoteException {
         this.name = name;
         this.model = model;
+    }*/
+    
+    public Com(String name, Directory master) throws RemoteException{
+        this.name = name;
+        this.master = master;
     }
 
     @Override
@@ -128,6 +135,12 @@ public class Com extends UnicastRemoteObject implements ComInterface {
         } catch (IOException ex) {
             Logger.getLogger(Com.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+    }
+
+    @Override
+    public Directory pull() throws RemoteException {
+        return this.master;
     }
 
 }
