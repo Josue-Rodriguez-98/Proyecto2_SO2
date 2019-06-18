@@ -72,8 +72,9 @@ public class Cliente extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Cliente");
 
         identificador.setText("¿Qué soy?");
@@ -155,6 +156,16 @@ public class Cliente extends javax.swing.JFrame {
             }
         });
 
+        jButton5.setBackground(new java.awt.Color(255, 0, 0));
+        jButton5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButton5.setForeground(new java.awt.Color(255, 255, 255));
+        jButton5.setText("X");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -172,7 +183,11 @@ public class Cliente extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(botonDesconectar)))
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jButton5)))
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -206,7 +221,10 @@ public class Cliente extends javax.swing.JFrame {
                             .addComponent(botonDesconectar))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cargarArchivo)
@@ -231,10 +249,20 @@ public class Cliente extends javax.swing.JFrame {
 
     private void cargarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cargarArchivoActionPerformed
         if (arbolCliente.getSelectionPath() != null) {
-
-            //System.out.println(arbolCliente.getSelectionPath().toString());
             String path = formatPathFromTree(arbolCliente.getSelectionPath().toString());
-            currentPath = path;
+            //System.out.println(path);
+            if (path.endsWith(".txt")) {
+                try {
+                    String[] route = path.split("/");
+                    this.openFile(route, cache, 1);
+                    showContents(currentFile);
+                } catch (IOException ex) {
+                    Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                System.out.println("ATENCION: ¡Lo que intenta recuperar es un directorio!");
+            }
+            /*currentPath = path;
             if (path.endsWith(".txt")) {
                 textoArchivo.setText(null);
                 System.out.println("Recuperar archivo...");
@@ -250,7 +278,7 @@ public class Cliente extends javax.swing.JFrame {
                 }
             } else {
                 System.out.println("ATENCION: ¡Lo que intenta recuperar es un directorio!");
-            }
+            }*/
         } else {
             System.out.println("ATENCION: ¡Seleccione un nodo primero!");
         }
@@ -363,6 +391,19 @@ public class Cliente extends javax.swing.JFrame {
         cargarArbol(cache, r);
         this.arbolCliente.setModel(new DefaultTreeModel(r));
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        try {
+            if(server != null){
+                server.remove(this.cliente.getName());
+                System.out.println("ESTADO: Desconectado");
+            }
+        } catch (RemoteException ex) {
+            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+        } finally{
+            System.exit(0);
+        }
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arprueguments
@@ -489,6 +530,33 @@ public class Cliente extends javax.swing.JFrame {
         }
     }
 
+    public void openFile(String[] path, Directory dir, int index) {
+        /*System.out.println("###########################");
+        System.out.println("path im searching for: " +path[index]);
+        System.out.println("directory im currently at: " + dir.dirName);
+        System.out.println("index: " + index);
+        System.out.println("###########################");*/
+        if (index == path.length - 1) {
+            for (int i = 0; i < dir.archivos.size(); i++) {
+                if (dir.archivos.get(i).getName().equals(path[index])) {
+                    //System.out.println("Encontro algo: " + dir.archivos.get(i).getName());
+                    currentFile = dir.archivos.get(i);
+                    //System.out.println("Aqui estoy despues de asignar el currentFile");
+                    return;
+                }
+            }
+        }
+        for (int i = 0; i < dir.subdirectorios.size(); i++) {
+            if (dir.subdirectorios.get(i).dirName.equals(path[index])) {
+                //System.out.println(">>Encontro algo: " + dir.subdirectorios.get(i).dirName);
+                if (index != path.length - 1) {
+                    int helper = index + 1;
+                    openFile(path, dir.subdirectorios.get(i), helper);
+                }
+            }
+        }
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTree arbolCliente;
@@ -503,6 +571,7 @@ public class Cliente extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea textoArchivo;
