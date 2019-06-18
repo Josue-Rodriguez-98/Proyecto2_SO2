@@ -186,7 +186,7 @@ public final class Servidor extends javax.swing.JFrame {
             }else if(file.isDirectory()){
                 //System.out.println("hizo un pushDirectory");
                 dirs.pushDirectory(cargarDirectorioEnCache(file.getAbsolutePath(),new Directory()));
-                dirs.imprimirDirectorios();
+                //dirs.imprimirDirectorios();
             }
         }
         return dirs;

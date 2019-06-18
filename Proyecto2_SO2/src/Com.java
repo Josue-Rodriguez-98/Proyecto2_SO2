@@ -35,11 +35,6 @@ public class Com extends UnicastRemoteObject implements ComInterface {
         this.name = name;
     }
 
-    /*public Com(String name, DefaultTreeModel model) throws RemoteException {
-        this.name = name;
-        this.model = model;
-    }*/
-    
     public Com(String name, Directory master) throws RemoteException{
         this.name = name;
         this.master = master;
@@ -49,17 +44,7 @@ public class Com extends UnicastRemoteObject implements ComInterface {
     public String getName() throws RemoteException {
         return this.name;
     }
-
-    @Override
-    public DefaultTreeModel getModel() throws RemoteException {
-        return this.model;
-    }
-
-    @Override
-    public void sendTree() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    
     @Override
     public void setModel(DefaultTreeModel modelo) throws RemoteException {
         this.model = modelo;
@@ -71,7 +56,7 @@ public class Com extends UnicastRemoteObject implements ComInterface {
     }
 
     @Override
-    public void send(String msg) throws RemoteException {
+    public void sendMessage(String msg) throws RemoteException {
         System.out.println(msg);
 
     }
@@ -91,7 +76,7 @@ public class Com extends UnicastRemoteObject implements ComInterface {
     public void nuevoCliente() throws RemoteException {
         Iterator<ComInterface> it = this.clients.iterator();
         while (it.hasNext()) {
-            it.next().setModel(this.model);
+            it.next().setMaster(this.master);
             //actual.printMessage("Cambios en el arbol, presione refrescar!");
         }
     }
@@ -141,6 +126,33 @@ public class Com extends UnicastRemoteObject implements ComInterface {
     @Override
     public Directory pull() throws RemoteException {
         return this.master;
+    }
+
+    @Override
+    public void remove(String name) throws RemoteException {
+        Iterator<ComInterface> it = this.clients.iterator();
+        int eraser = -1;
+        int deleteMe = -1;
+        while (it.hasNext()) {
+            eraser++;
+            if(it.next().getName().equals(name)){
+                deleteMe = eraser;
+            }
+            //actual.printMessage("Cambios en el arbol, presione refrescar!");
+        }
+        if(deleteMe != -1){
+            this.clients.remove(deleteMe);
+        }
+        it = this.clients.iterator();
+        while (it.hasNext()) {
+            System.out.println(it.next().getName());
+            //actual.printMessage("Cambios en el arbol, presione refrescar!");
+        }
+    }
+
+    @Override
+    public void setMaster(Directory master) throws RemoteException{
+        this.master = master;
     }
 
 }

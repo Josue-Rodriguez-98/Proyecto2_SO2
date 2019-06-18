@@ -239,7 +239,7 @@ public class Cliente extends javax.swing.JFrame {
             Registry registry = LocateRegistry.getRegistry(4200);
             server = (ComInterface)registry.lookup("proyecto");
             if(server!=null){
-                System.out.println("Conectado");
+                System.out.println("ESTADO: Conectado");
             }
             //server.nuevoCliente();
             server.setClient(cliente);
@@ -256,7 +256,12 @@ public class Cliente extends javax.swing.JFrame {
     }//GEN-LAST:event_botonConectarActionPerformed
 
     private void botonDesconectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonDesconectarActionPerformed
-        // TODO add your handling code here:
+        try {
+            server.remove(this.cliente.getName());
+            System.out.println("ESTADO: Desconectado");
+        } catch (RemoteException ex) {
+            Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_botonDesconectarActionPerformed
 
     /**
