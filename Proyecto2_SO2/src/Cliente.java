@@ -393,13 +393,13 @@ public class Cliente extends javax.swing.JFrame {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         try {
-            if(server != null){
+            if (server != null) {
                 server.remove(this.cliente.getName());
                 System.out.println("ESTADO: Desconectado");
             }
         } catch (RemoteException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
-        } finally{
+        } finally {
             System.exit(0);
         }
     }//GEN-LAST:event_jButton5ActionPerformed
@@ -485,10 +485,19 @@ public class Cliente extends javax.swing.JFrame {
     }
 
     public void insertIntoTree(String[] path, DefaultMutableTreeNode raiz, String dirName) {
-        insert(cache, dirName, path, 1);
-        DefaultMutableTreeNode r = new DefaultMutableTreeNode("Root");
-        cargarArbol(cache, r);
-        this.arbolCliente.setModel(new DefaultTreeModel(r));
+        System.out.println(path.toString());
+
+        if (path.length == 1) {
+            DefaultMutableTreeNode r = (DefaultMutableTreeNode)(arbolCliente.getModel()).getRoot();
+            r.add(new DefaultMutableTreeNode(dirName));
+            this.arbolCliente.setModel(new DefaultTreeModel(r));
+            
+        } else {
+            insert(cache, dirName, path, 1);
+            DefaultMutableTreeNode r = new DefaultMutableTreeNode("Root");
+            cargarArbol(cache, r);
+            this.arbolCliente.setModel(new DefaultTreeModel(r));
+        }
     }
 
     /*public void insert(int index, String[] path, DefaultMutableTreeNode nodo, String dirName){
@@ -515,6 +524,7 @@ public class Cliente extends javax.swing.JFrame {
     }*/
     public void insert(Directory dirs, String dirName, String[] path, int index) {
         for (int i = 0; i < dirs.subdirectorios.size(); i++) {
+            System.out.println(path[index]);
             if (dirs.subdirectorios.get(i).dirName.equals(path[index])) {
                 if (index == path.length - 1) {
                     Directory addMe = new Directory();
