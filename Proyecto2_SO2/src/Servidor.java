@@ -4,6 +4,7 @@ import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTree;
@@ -37,6 +38,14 @@ public final class Servidor extends javax.swing.JFrame {
         
         
         this.arbolServidor.setModel(new DefaultTreeModel(r));
+        
+        //Preparar el directorio para enviarlo a la cache del cliente
+       // System.out.println("Deberia hacer esto...");
+        directorioRaiz.setName("Root");
+        directorioRaiz = cargarDirectorioEnCache("./Root",directorioRaiz);
+        System.out.println(directorioRaiz.subdirectorios.size());
+        directorioRaiz.printDirectories("-",directorioRaiz);
+        //System.out.println("Lo hizo?");
         
         this.setLocationRelativeTo(null);
     }
@@ -157,6 +166,25 @@ public final class Servidor extends javax.swing.JFrame {
         
     }
     
+    public Directory cargarDirectorioEnCache(String root, Directory dirs){
+        File directory = new File(root);
+        dirs.setName(directory.getName());
+        File[] list = directory.listFiles();
+        for (File file : list) {
+            if(file.isFile()){
+                System.out.println("hizo un pushFile");
+                dirs.pushFile(file);
+            }else if(file.isDirectory()){
+                System.out.println("hizo un pushDirectory");
+                dirs.pushDirectory(cargarDirectorioEnCache(file.getAbsolutePath(),new Directory()));
+                dirs.imprimirDirectorios();
+            }
+        }
+        return dirs;
+    }
+    
+    
+    
     public static String getParentName(String parent){
         String retVal = "";
         String retValReversed = "";
@@ -184,4 +212,5 @@ public final class Servidor extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
     Com server;
+    Directory directorioRaiz = new Directory();
 }
