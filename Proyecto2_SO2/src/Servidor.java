@@ -58,20 +58,21 @@ public final class Servidor extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        identificador = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         arbolServidor = new javax.swing.JTree();
         jScrollPane2 = new javax.swing.JScrollPane();
         textoMensaje = new javax.swing.JTextArea();
-        jButton2 = new javax.swing.JButton();
+        botonEnviarMensaje = new javax.swing.JButton();
+        botonRefrescar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Servidor");
 
-        jButton1.setText("¿Qué soy?");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        identificador.setText("¿Qué soy?");
+        identificador.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                identificadorActionPerformed(evt);
             }
         });
 
@@ -83,10 +84,17 @@ public final class Servidor extends javax.swing.JFrame {
         textoMensaje.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Enviar mensaje a Clientes"));
         jScrollPane2.setViewportView(textoMensaje);
 
-        jButton2.setText("Enviar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        botonEnviarMensaje.setText("Enviar");
+        botonEnviarMensaje.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                botonEnviarMensajeActionPerformed(evt);
+            }
+        });
+
+        botonRefrescar.setText("Refrescar");
+        botonRefrescar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonRefrescarActionPerformed(evt);
             }
         });
 
@@ -104,11 +112,13 @@ public final class Servidor extends javax.swing.JFrame {
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGap(110, 110, 110)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(botonEnviarMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(117, Short.MAX_VALUE))))
             .addGroup(layout.createSequentialGroup()
-                .addGap(53, 53, 53)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(49, 49, 49)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(identificador, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+                    .addComponent(botonRefrescar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -120,20 +130,22 @@ public final class Servidor extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1)
-                .addContainerGap(18, Short.MAX_VALUE))
+                        .addComponent(botonEnviarMensaje)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(identificador)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(botonRefrescar)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void identificadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identificadorActionPerformed
         System.out.println("Este es el servidor");
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_identificadorActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void botonEnviarMensajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEnviarMensajeActionPerformed
         if(!textoMensaje.getText().equals("")){
             try {
                 server.sendMessage(textoMensaje.getText());
@@ -141,7 +153,25 @@ public final class Servidor extends javax.swing.JFrame {
                 Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_botonEnviarMensajeActionPerformed
+
+    private void botonRefrescarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonRefrescarActionPerformed
+        updateStructure(server.master, "./Root");
+        
+        //Preparar el directorio para enviarlo a la cache del cliente
+        directorioRaiz = new Directory();
+        directorioRaiz.setName("Root");
+        directorioRaiz = cargarDirectorioEnCache("./Root",directorioRaiz);
+        System.out.println("#######Despues del agregado#########");
+        directorioRaiz.printDirectories("-",directorioRaiz);
+        System.out.println("####################################");
+        //Cargar arbolito 
+        DefaultMutableTreeNode r = new DefaultMutableTreeNode("Root");
+        cargarDirectorio(directorioRaiz,r);
+        this.arbolServidor.setModel(new DefaultTreeModel(r));
+        //System.out.println("yay :3");
+        
+    }//GEN-LAST:event_botonRefrescarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -253,10 +283,40 @@ public final class Servidor extends javax.swing.JFrame {
         return retValReversed;
     }
 
+    public void updateStructure(Directory root, String path){
+        File directory = new File(path);
+        File[] list = directory.listFiles();
+        /*if(root.subdirectorios.size() != list.length){
+            for (File file : list) {
+                if(file.isFile()){
+
+                }else if(file.isDirectory()){
+
+                }
+            }            
+        }*/
+        for (int i = 0; i < root.subdirectorios.size(); i++) {
+            String actual = path + "/" + root.subdirectorios.get(i).dirName;
+            File tempo = new File(actual);
+            if(!tempo.exists()){
+                tempo.mkdir();
+            }
+        }
+        for (File file : list) {
+            if(file.isDirectory() && file.exists()){
+                for (int i = 0; i < root.subdirectorios.size(); i++) {
+                    if(file.getName().equals(root.subdirectorios.get(i).dirName)){
+                        updateStructure(root.subdirectorios.get(i),file.getAbsolutePath());
+                    }
+                }
+            }
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTree arbolServidor;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton botonEnviarMensaje;
+    private javax.swing.JButton botonRefrescar;
+    private javax.swing.JButton identificador;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea textoMensaje;

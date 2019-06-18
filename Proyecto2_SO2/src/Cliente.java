@@ -336,14 +336,13 @@ public class Cliente extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (arbolCliente.getSelectionPath() != null) {
-            DefaultMutableTreeNode hols = (DefaultMutableTreeNode) arbolCliente.getModel().getRoot();
             //System.out.println("toString: " + hols.toString());
             //System.out.println("normal: " + hols);
             System.out.println(arbolCliente.getSelectionPath().toString());
             String path = formatPathFromTree(arbolCliente.getSelectionPath().toString());
             System.out.println(path);
             String[] dirs = path.split("/");
-            System.out.println("Ingrese el nombre del nuevo directorio (una palabra): ");
+            System.out.print("Ingrese el nombre del nuevo directorio (una palabra): ");
             String dirName = entrada.next();
             DefaultMutableTreeNode r = (DefaultMutableTreeNode) ((DefaultTreeModel) arbolCliente.getModel()).getRoot();
             insertIntoTree(dirs, r, dirName);
