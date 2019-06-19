@@ -141,6 +141,11 @@ public class Cliente extends javax.swing.JFrame {
         });
 
         jButton2.setText("+ Archivo");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Enviar Cambios");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -405,6 +410,41 @@ public class Cliente extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton5ActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        if (arbolCliente.getSelectionPath() != null) {
+            //System.out.println("toString: " + hols.toString());
+            //System.out.println("normal: " + hols);
+            System.out.println(arbolCliente.getSelectionPath().toString());
+            String path = formatPathFromTree(arbolCliente.getSelectionPath().toString());
+            System.out.println(path);
+            String[] dirs = path.split("/");
+            System.out.print("Ingrese el nombre del nuevo archivo (una palabra): ");
+            String dirName = entrada.next();
+            dirName = path + "/" + dirName + ".txt";
+            DefaultMutableTreeNode r = (DefaultMutableTreeNode) ((DefaultTreeModel) arbolCliente.getModel()).getRoot();
+            insertIntoTreeFile(dirs, r, dirName);
+            /*currentPath = path;
+            if(path.endsWith(".txt")){
+                textoArchivo.setText(null);
+                System.out.println("Recuperar archivo...");
+                try {
+                    currentFile = server.requestFile(path);
+                    System.out.println("¡Recuperado exitoso!");
+                    System.out.println(path);
+                    showContents(currentFile);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }else{
+                System.out.println("ATENCION: ¡Lo que intenta recuperar es un directorio!");
+            }*/
+        } else {
+            System.out.println("ATENCION: ¡Seleccione un nodo primero!");
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     /**
      * @param args the command line arprueguments
      */
@@ -500,6 +540,62 @@ public class Cliente extends javax.swing.JFrame {
             this.arbolCliente.setModel(new DefaultTreeModel(r));
         }
     }
+    
+    public void insert(Directory dirs, String dirName, String[] path, int index) {
+        for (int i = 0; i < dirs.subdirectorios.size(); i++) {
+            System.out.println(path[index]);
+            if (dirs.subdirectorios.get(i).dirName.equals(path[index])) {
+                if (index == path.length - 1) {
+                    Directory addMe = new Directory();
+                    addMe.setName(dirName);
+                    dirs.subdirectorios.get(i).subdirectorios.add(addMe);
+                    bitModificacion = true;
+                } else {
+                    int helper = index + 1;
+                    insert(dirs.subdirectorios.get(i), dirName, path, helper);
+                }
+            }
+        }
+    }
+    
+    private void insertIntoTreeFile(String[] path, DefaultMutableTreeNode raiz, String dirName) {
+        if (path.length == 1) {
+//            DefaultMutableTreeNode r = (DefaultMutableTreeNode)(arbolCliente.getModel()).getRoot();
+//            File addMe = new File(dirName);
+//            cache.archivos.add(addMe);
+//            cargarArbol(cache, r);
+//            this.arbolCliente.setModel(new DefaultTreeModel(r));
+            
+        } else {
+            insertFile(cache, dirName, path, 1);
+            DefaultMutableTreeNode r = new DefaultMutableTreeNode("Root");
+            cargarArbol(cache, r);
+            this.arbolCliente.setModel(new DefaultTreeModel(r));
+        }
+            
+    }
+    
+    public void insertFile(Directory dirs, String dirName, String[] path, int index) {
+        for (int i = 0; i < dirs.subdirectorios.size(); i++) {
+            System.out.println(path[index]);
+            if (dirs.subdirectorios.get(i).dirName.equals(path[index])) {
+                if (index == path.length - 1) {
+                    File addMe = new File(dirName);
+                    dirs.subdirectorios.get(i).archivos.add(addMe);
+                    try{
+                        server.saveFile(" ", addMe);
+                        server.setCambio(true);
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                    bitModificacion = true;
+                } else {
+                    int helper = index + 1;
+                    insert(dirs.subdirectorios.get(i), dirName, path, helper);
+                }
+            }
+        }
+    }
 
     /*public void insert(int index, String[] path, DefaultMutableTreeNode nodo, String dirName){
         System.out.println("index: " + index);
@@ -523,22 +619,6 @@ public class Cliente extends javax.swing.JFrame {
         }
         
     }*/
-    public void insert(Directory dirs, String dirName, String[] path, int index) {
-        for (int i = 0; i < dirs.subdirectorios.size(); i++) {
-            System.out.println(path[index]);
-            if (dirs.subdirectorios.get(i).dirName.equals(path[index])) {
-                if (index == path.length - 1) {
-                    Directory addMe = new Directory();
-                    addMe.setName(dirName);
-                    dirs.subdirectorios.get(i).subdirectorios.add(addMe);
-                    bitModificacion = true;
-                } else {
-                    int helper = index + 1;
-                    insert(dirs.subdirectorios.get(i), dirName, path, helper);
-                }
-            }
-        }
-    }
 
     public void openFile(String[] path, Directory dir, int index) {
         /*System.out.println("###########################");
@@ -594,4 +674,5 @@ public class Cliente extends javax.swing.JFrame {
     Directory cache = new Directory();
     boolean bitModificacion = false;
     Scanner entrada = new Scanner(System.in);
+
 }
