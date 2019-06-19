@@ -346,6 +346,12 @@ public class Cliente extends javax.swing.JFrame {
             String dirName = entrada.next();
             DefaultMutableTreeNode r = (DefaultMutableTreeNode) ((DefaultTreeModel) arbolCliente.getModel()).getRoot();
             insertIntoTree(dirs, r, dirName);
+            bitModificacion = true;
+            if(dirs.length == 1){
+                Directory addMe = new Directory();
+                addMe.setName(dirName);
+                cache.subdirectorios.add(addMe);
+            }
             /*currentPath = path;
             if(path.endsWith(".txt")){
                 textoArchivo.setText(null);
@@ -373,6 +379,10 @@ public class Cliente extends javax.swing.JFrame {
             try {
                 server.push(cache);
                 server.setCambio(true);
+                cont++;
+                if(cont == 2){
+                    bitModificacion = false;
+                }
             } catch (RemoteException ex) {
                 Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -594,4 +604,5 @@ public class Cliente extends javax.swing.JFrame {
     Directory cache = new Directory();
     boolean bitModificacion = false;
     Scanner entrada = new Scanner(System.in);
+    int cont = 0;
 }
