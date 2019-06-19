@@ -1,4 +1,5 @@
 
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,6 +14,7 @@ import java.util.Enumeration;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -32,8 +34,9 @@ public class Cliente extends javax.swing.JFrame {
      */
     public Cliente() throws RemoteException, NotBoundException {
         initComponents();
-        System.out.print("Ingrese un nombre para el cliente: ");
-        String nombre = entrada.next();
+        System.out.print("Ingrese un nombre para el cliente.");
+        //String nombre = entrada.next();
+        String nombre = JOptionPane.showInputDialog(null, "Ingrese un nombre para el cliente");
         cliente = new Com(nombre);
         clientName.setText(nombre);
         /*Registry registry = LocateRegistry.getRegistry(4200);
@@ -57,6 +60,9 @@ public class Cliente extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        dirContextMenu = new javax.swing.JPopupMenu();
+        Renombrar = new javax.swing.JMenuItem();
+        Eliminar = new javax.swing.JMenuItem();
         identificador = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         arbolCliente = new javax.swing.JTree();
@@ -74,6 +80,22 @@ public class Cliente extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
 
+        Renombrar.setText("Renombrar Directorio");
+        Renombrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RenombrarActionPerformed(evt);
+            }
+        });
+        dirContextMenu.add(Renombrar);
+
+        Eliminar.setText("Eliminar Directorio");
+        Eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EliminarActionPerformed(evt);
+            }
+        });
+        dirContextMenu.add(Eliminar);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Cliente");
 
@@ -87,6 +109,11 @@ public class Cliente extends javax.swing.JFrame {
         arbolCliente.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Archivos en Cache"));
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Empty");
         arbolCliente.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        arbolCliente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                arbolClienteMousePressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(arbolCliente);
 
         cargarArchivo.setText("Abrir");
@@ -201,12 +228,12 @@ public class Cliente extends javax.swing.JFrame {
                             .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cargarArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
+                            .addComponent(cargarArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(63, 63, 63)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(identificador, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(botonMostrarOriginal, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE))
+                            .addComponent(botonMostrarOriginal, javax.swing.GroupLayout.PREFERRED_SIZE, 115, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -348,7 +375,8 @@ public class Cliente extends javax.swing.JFrame {
             System.out.println(path);
             String[] dirs = path.split("/");
             System.out.print("Ingrese el nombre del nuevo directorio (una palabra): ");
-            String dirName = entrada.next();
+            //String dirName = entrada.next();
+            String dirName = JOptionPane.showInputDialog(null, "Ingrese el nombre del nuevo directorio (una palabra)");
             DefaultMutableTreeNode r = (DefaultMutableTreeNode) ((DefaultTreeModel) arbolCliente.getModel()).getRoot();
             insertIntoTree(dirs, r, dirName);
             /*currentPath = path;
@@ -419,8 +447,10 @@ public class Cliente extends javax.swing.JFrame {
             System.out.println(path);
             String[] dirs = path.split("/");
             System.out.print("Ingrese el nombre del nuevo archivo (una palabra): ");
-            String dirName = entrada.next();
-            dirName = path + "/" + dirName + ".txt";
+            //String dirName = entrada.next();
+            String dirName = JOptionPane.showInputDialog(null, "Ingrese el nombre del nuevo archivo (una palabra)");
+            //dirName = path + "/" + dirName + ".txt";
+            dirName = dirName + ".txt";
             DefaultMutableTreeNode r = (DefaultMutableTreeNode) ((DefaultTreeModel) arbolCliente.getModel()).getRoot();
             insertIntoTreeFile(dirs, r, dirName);
             /*currentPath = path;
@@ -444,6 +474,26 @@ public class Cliente extends javax.swing.JFrame {
             System.out.println("ATENCION: ¡Seleccione un nodo primero!");
         }
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void RenombrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RenombrarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_RenombrarActionPerformed
+
+    private void arbolClienteMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_arbolClienteMousePressed
+        //Cuando se hace clic en el arbol, mira si es clic derecho y si hay un nodo seleccionado
+        if (evt.getButton() == MouseEvent.BUTTON3 && arbolCliente.getSelectionPaths() != null){ 
+            
+            //Verifica si el nodo seleccionado contiene ".txt"
+            if (!arbolCliente.getSelectionPaths()[0].getLastPathComponent().toString().contains(".txt"))
+                
+                //Muestra el menú contextual
+                dirContextMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_arbolClienteMousePressed
+
+    private void EliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarActionPerformed
+
+    }//GEN-LAST:event_EliminarActionPerformed
 
     /**
      * @param args the command line arprueguments
@@ -649,6 +699,8 @@ public class Cliente extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem Eliminar;
+    private javax.swing.JMenuItem Renombrar;
     private javax.swing.JTree arbolCliente;
     private javax.swing.JButton botonConectar;
     private javax.swing.JButton botonDesconectar;
@@ -656,6 +708,7 @@ public class Cliente extends javax.swing.JFrame {
     private javax.swing.JButton botonMostrarOriginal;
     private javax.swing.JButton cargarArchivo;
     private javax.swing.JTextField clientName;
+    private javax.swing.JPopupMenu dirContextMenu;
     private javax.swing.JButton identificador;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
