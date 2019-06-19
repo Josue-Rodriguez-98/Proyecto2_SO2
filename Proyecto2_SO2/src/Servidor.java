@@ -46,6 +46,9 @@ public final class Servidor extends javax.swing.JFrame {
         Registry registry = LocateRegistry.createRegistry(4200);
         registry.bind("proyecto", server);
         
+        updateClass = new Update(this);
+        updateThread = new Thread(updateClass);
+        
         this.setLocationRelativeTo(null);
     }
 
@@ -172,7 +175,28 @@ public final class Servidor extends javax.swing.JFrame {
         //System.out.println("yay :3");
         
     }//GEN-LAST:event_botonRefrescarActionPerformed
-
+    
+    public void holaa(){
+        System.out.println("hola mu wena");
+    }
+    
+    public void refrescar(){
+        updateStructure(server.master, "./Root");
+        
+        //Preparar el directorio para enviarlo a la cache del cliente
+        directorioRaiz = new Directory();
+        directorioRaiz.setName("Root");
+        directorioRaiz = cargarDirectorioEnCache("./Root",directorioRaiz);
+        System.out.println("#######Despues del agregado#########");
+        directorioRaiz.printDirectories("-",directorioRaiz);
+        System.out.println("####################################");
+        //Cargar arbolito 
+        DefaultMutableTreeNode r = new DefaultMutableTreeNode("Root");
+        cargarDirectorio(directorioRaiz,r);
+        this.arbolServidor.setModel(new DefaultTreeModel(r));
+        //System.out.println("yay :3");
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -205,6 +229,7 @@ public final class Servidor extends javax.swing.JFrame {
             public void run() {
                 try {
                     new Servidor().setVisible(true);
+                    updateThread.start();
                 } catch (RemoteException ex) {
                     Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (AlreadyBoundException ex) {
@@ -323,4 +348,7 @@ public final class Servidor extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
     Com server;
     Directory directorioRaiz = new Directory();
+    Update updateClass;
+    static Thread updateThread;
+    
 }

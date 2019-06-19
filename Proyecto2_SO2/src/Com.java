@@ -31,6 +31,8 @@ public class Com extends UnicastRemoteObject implements ComInterface {
 
     public Directory master;
     
+    public boolean cambio = false;
+    
     public Com(String name) throws RemoteException {
         this.name = name;
     }
@@ -38,6 +40,7 @@ public class Com extends UnicastRemoteObject implements ComInterface {
     public Com(String name, Directory master) throws RemoteException{
         this.name = name;
         this.master = master;
+        this.cambio = false;
     }
 
     @Override
@@ -110,6 +113,11 @@ public class Com extends UnicastRemoteObject implements ComInterface {
         }*/
         return retVal;
     }
+    
+    @Override
+    public boolean getCambio() throws RemoteException{
+        return cambio;
+    }
 
     @Override
     public void saveFile(String content, File file) throws RemoteException {
@@ -172,8 +180,13 @@ public class Com extends UnicastRemoteObject implements ComInterface {
             it.next().setMaster(this.master);
             this.clients.elementAt(index).print("Cambios la estructura, presione refrescar!");
             index ++;
-        }
-        
+        }        
     }
+
+    @Override
+    public void setCambio(boolean nCambio) throws RemoteException {
+        cambio = nCambio;
+    }
+
 
 }

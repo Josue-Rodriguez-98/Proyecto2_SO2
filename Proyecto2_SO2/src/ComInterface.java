@@ -32,5 +32,8 @@ public interface ComInterface extends Remote{
     public void setMaster(Directory master) throws RemoteException;
     public void print(String msg) throws RemoteException;
     public void push(Directory modified) throws RemoteException;
+    public boolean getCambio() throws RemoteException;
+    public void setCambio(boolean nCambio) throws RemoteException;
     
+ 
 }

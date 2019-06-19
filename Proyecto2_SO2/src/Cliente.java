@@ -372,6 +372,7 @@ public class Cliente extends javax.swing.JFrame {
         if (bitModificacion) {
             try {
                 server.push(cache);
+                server.setCambio(true);
             } catch (RemoteException ex) {
                 Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -485,7 +486,7 @@ public class Cliente extends javax.swing.JFrame {
     }
 
     public void insertIntoTree(String[] path, DefaultMutableTreeNode raiz, String dirName) {
-        System.out.println(path.toString());
+        //System.out.println(path.toString());
 
         if (path.length == 1) {
             DefaultMutableTreeNode r = (DefaultMutableTreeNode)(arbolCliente.getModel()).getRoot();
